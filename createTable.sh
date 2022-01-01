@@ -1,8 +1,8 @@
 #!/bin/bash
 typeset -i n=0
 let columns[$n]
-columnsString
-dataTypes
+let columnsString
+let dataTypes
 read -p "Enter table name :" tbname
 if [ -f $dbPath/$DBdir/$tbname ]
 then

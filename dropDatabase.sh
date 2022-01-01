@@ -3,7 +3,7 @@ echo "++++++Drop Database++++++"
 read -p "Enter DB name:" DBdir
 if [ -d $dbPath/$DBdir ]
 then  
-    echo "Are you sure you wannt to delete $DBdir ?"
+    echo "Are you sure you want to delete $DBdir ?"
     read -p "Press Y/y to confirm or anything else to exit: " choice
     case $choice in 
         [yY]) rm -r $dbPath/$DBdir;
