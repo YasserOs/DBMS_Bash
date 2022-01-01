@@ -10,7 +10,7 @@ if [ -f $dbPath/$DBdir/$tbname ]
                             {   
                                 if(NR==1)
                                     {
-                                        datatypes_array[$i-1]=$i;
+                                        datatypes_array[i-1]=$i;
                                         print datatypes_array[i-1];
                                     }                           
                             }  
