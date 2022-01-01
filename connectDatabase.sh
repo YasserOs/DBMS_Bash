@@ -17,12 +17,12 @@ then
         fi
 fi
 echo "Connected to $DBdir successfully !"
-PS3="$DBdir >"
+PS3="$DBdir> "
 select x in "Create Table" "List Tables" "Drop Table" "Insert into Table" "Select From Table" "Delete From Table" "Update Table" "Main menu"
 do
     case $REPLY in
-        1) source ./createTable.sh 
-            ;;
+        1) source ./createTable.sh
+             ;;
         2) source ./listTables.sh
             ;;
         3) source ./dropTable.sh
