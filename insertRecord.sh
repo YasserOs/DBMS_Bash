@@ -24,6 +24,13 @@ if [ -f $dbPath/$DBdir/$tbname ]
                                     }
                             }
                         }' $dbPath/$DBdir/$tbname)
+echo $y
+echo $z
+sleep 3
+calledFromMenu=0
+source ./connectDatabase.sh
+
+                        
 else
     read -p "Table doesn't exist , 
     press 0 to go back to previous menu 
@@ -39,5 +46,4 @@ else
                 ;;
             esac
 fi
-    echo $y
-    echo $z
+    
