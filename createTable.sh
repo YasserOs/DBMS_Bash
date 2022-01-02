@@ -30,8 +30,8 @@ else
     n=$n+1
 
     ## takes the other columns
-    read -p "Enter number of columns :" num
-    while test $n -le $num
+    read -p "Enter number of columns :" numColumns
+    while test $n -le $numColumns
     do
         let columnFound=0
         ## validation loop to check if the column name inserted exists in the columns array or not
@@ -77,6 +77,8 @@ fi
 ## creating file for the table and redirecting echo to the file by >> to append a new line
 
 touch $dbPath/$DBdir/$tbname
+typeset -i numColumns=$numColumns+1
+echo $numColumns >> $dbPath/$DBdir/$tbname
 echo $dataTypes >> $dbPath/$DBdir/$tbname
 echo $columnsString >> $dbPath/$DBdir/$tbname
 
