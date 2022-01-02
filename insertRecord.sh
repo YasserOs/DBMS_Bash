@@ -1,32 +1,21 @@
 #!/bin/bash
 typeset -i n=0
-#typeset -i m=0
+typeset -i m=1
 let columns_array[$n]
 let datatypes_array[$n]
 read -p "Enter table name : " tbname
 if [ -f $dbPath/$DBdir/$tbname ]
         then
-            y=($(awk -F: '{for (i=1;i<=NF;++i)
-                            {   
-                                if(NR==1)
-                                    {
-                                        datatypes_array[i-1]=$i;
-                                        print datatypes_array[i-1];
-                                    }                           
-               		    }  
-                        }' $dbPath/$DBdir/$tbname))
-            z=($(awk -F: '{for (i=1;i<=NF;++i) 
-                            {           
-                                if(NR==2)
-                                    {
-                                        columns_array[i-1]=$i;
-                                        print columns_array[i-1];
-                                    }
-                            }
-                        }' $dbPath/$DBdir/$tbname))
+	    for i in $dbPath/$DBdir/$tbname
+		do 
+		  datatypes_array[$i]= cut -d: -f$m $dbPath/$DBdir/$tbname
+		  m=$m+1
+		done
 echo ${datatypes_array[@]}
-echo ${z[@]}
 sleep 3
+#echo ${datatypes_array[@]}
+#echo ${z[@]}
+#sleep 3
 calledFromMenu=0
 source ./connectDatabase.sh
 
