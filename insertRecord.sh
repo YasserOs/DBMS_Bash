@@ -6,16 +6,16 @@ let datatypes_array[$n]
 read -p "Enter table name : " tbname
 if [ -f $dbPath/$DBdir/$tbname ]
         then
-            y=$(awk -F: '{for (i=1;i<=NF;++i)
+            y=($(awk -F: '{for (i=1;i<=NF;++i)
                             {   
                                 if(NR==1)
                                     {
                                         datatypes_array[i-1]=$i;
                                         print datatypes_array[i-1];
                                     }                           
-                            }  
-                        }' $dbPath/$DBdir/$tbname)
-            z=$(awk -F: '{for (i=1;i<=NF;++i) 
+               		    }  
+                        }' $dbPath/$DBdir/$tbname))
+            z=($(awk -F: '{for (i=1;i<=NF;++i) 
                             {           
                                 if(NR==2)
                                     {
@@ -23,9 +23,9 @@ if [ -f $dbPath/$DBdir/$tbname ]
                                         print columns_array[i-1];
                                     }
                             }
-                        }' $dbPath/$DBdir/$tbname)
-echo $y
-echo $z
+                        }' $dbPath/$DBdir/$tbname))
+echo ${datatypes_array[@]}
+echo ${z[@]}
 sleep 3
 calledFromMenu=0
 source ./connectDatabase.sh
