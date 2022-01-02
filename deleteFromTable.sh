@@ -11,7 +11,7 @@ if [ -f $dbPath/$DBdir/$tablename ]
         read -p "Enter name of column : " columnname
         while test $fn -le $fieldnum
         do
-            if [ "$columnname" == "$(head -n $fn $dbPath/$DBdir/$tablename | tail -n 1 | cut -d: -f$fn)" ]
+            if [ "$columnname" == "$(head -n 3 $dbPath/$DBdir/$tablename | tail -n 1 | cut -d: -f$fn)" ]
             then
             column_found=1
             break

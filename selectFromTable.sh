@@ -1,24 +1,78 @@
 #!/bin/bash
-read -p "Enter the table name : " tb_name
-read -p "Enter the column name : " co_name
-if [ -f $dbPath/$DBdir/$tb_name ]
-    then
-        if [ -f $dbPath/$DBdir/$co_name ]
-            then
-                cat $dbPath/$DBdir/$tb_name/$co_name
-fi
-else
-        read -p "Table or column doesn't exist >>
-press 0 to go to previous menu
-or 1 to go back to main menu 
-or 2 to retry :" x
-            case $x in
-            0) calledFromMenu=0; 
-               source ./connectDatabase.sh
+typeset -i fn=1
+typeset -i column_found=0
+typeset -i currentrecord=4
+read -p "Enter table name : " tabname
+total=`cat $dbPath/$DBdir/$tabname | wc -l`
+typeset -i fieldnum=$(head -n 1 $dbPath/$DBdir/$tabname)
+recordss=$(( total - 3 ))
+if [ -f $dbPath/$DBdir/$tabname ]
+        then
+        select x in "Select all records " "Select a certain field"
+        do  
+            case $REPLY in
+            1) cat $dbPath/$DBdir/$tabname | tail -n $recordss;
+                break
                 ;;
-            1) source ./Menu.sh
+            2) while true
+                do
+                    read -p "Enter name of column : " cname
+                    while test $fn -le $fieldnum
+                    do
+                        if [ "$cname" == "$(head -n 3 $dbPath/$DBdir/$tabname | tail -n 1 | cut -d: -f$fn)" ]
+                        then
+                        column_found=1
+                        break
+                        else
+                        column_found=0
+                        fi
+                        fn=$fn+1
+                    done
+                    if [ $column_found -eq 1 ]
+                    then
+                        break
+                    else
+                        echo "Column name does not exist!"
+                    fi
+                done;
+                while test $currentrecord -le $total
+                do
+                match_value=`cat $dbPath/$DBdir/$tabname | head -n $currentrecord | tail -n 1 | cut -d: -f$fn`
+                echo "$currentrecord : $match_value"
+                currentrecord=$currentrecord+1
+                done;
+                break
                 ;;
-            2) source ./selectFromTable.sh
-                ;;
-            esac
-fi
+                esac
+            done
+            fi
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
