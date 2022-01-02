@@ -18,6 +18,7 @@ sleep 3
 #sleep 3
 calledFromMenu=0
 source ./connectDatabase.sh
+echo "testing push"
 
                         
 else
