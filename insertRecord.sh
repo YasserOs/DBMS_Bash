@@ -32,14 +32,11 @@ if [ -f $dbPath/$DBdir/$tbname ]
             i=$i+1
         done
         
-        file=$(cat $dbPath/$DBdir/$tbname | wc -l)
-        rec_num=$(( file - 3 ))
-        records=$(tail -n $rec_num $dbPath/$DBdir/$tbname > temp_records)
-        typeset -i r=1
+        rec_num=$(cat $dbPath/$DBdir/$tbname | wc -l)
+        typeset -i r=4
         while test $r -le $rec_num
             do
-            #cat temp_records
-                pk_array[$r]=$(head -$r temp_records | tail -1 | cut -d: -f1) 
+                pk_array[$r]=$(cat cat $dbPath/$DBdir/$tbname | head -$r | tail -1 | cut -d: -f1) 
                 r=$r+1
             done
 
@@ -112,7 +109,6 @@ if [ -f $dbPath/$DBdir/$tbname ]
     done
     
 echo $input_record >> $dbPath/$DBdir/$tbname
-rm -r temp_records
 echo "=============================="
 echo "Record inserted successfully!"
 echo "=============================="
