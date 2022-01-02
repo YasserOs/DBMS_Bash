@@ -1,13 +1,16 @@
 #!/bin/bash
+shopt -s extglob
+export LC_COLLATE=C 
 typeset -i i=2 ## i starts from 2nd line as th 1st contains number of columns
 typeset -i fn=1 ## field number
 let columns_array[0]
 let datatypes_array[0]
+let pk_array[0]
+input_record=" "
 read -p "Enter table name : " tbname
 if [ -f $dbPath/$DBdir/$tbname ]
         then
         typeset -i numFields=$(head -n 1 $dbPath/$DBdir/$tbname)
-        echo "$numFields"
         while test $i -le 3
         do
             fn=1
@@ -27,16 +30,56 @@ if [ -f $dbPath/$DBdir/$tbname ]
             done
             i=$i+1
         done
-echo ${datatypes_array[@]}
-echo ${columns_array[@]}
+        
+        file=$(cat $dbPath/$DBdir/$tbname | wc -l)
+        rec_num=$(( file - 3 ))
+        records=$(tail -n $rec_num $dbPath/$DBdir/$tbname)
+        typeset -i r=1
+        while test $r -le $rec_num
+            do
+                pk_array[$r]= head -n $r $records | tail -n 1 
+                r=$r+1
+            done
+
+    ###end of data retrieval (pks , datatypes , columns)
+    echo ${columns_array[@]}
+    typeset -i n=0
+    while test $n -lt $numFields
+    do
+        while true 
+        do  
+            if [ $n -eq 0 ]
+            read -p "enter data for ${columns_array[$n]} with type ${datatypes_array[$n]} : "  x
+                    if [ "${datatypes_array[$n]}" == "String" ]
+                        then
+                            case $x in 
+                                +([a-zA-Z])) input_record="$input_record:$x";
+                                             break
+                                             ;;
+                                        *)  echo "please enter a string without any special characters" 
+                                            continue
+                                             ;; 
+                            esac
+
+                    elif [ "${datatypes_array[$n]}" == "Int" ]
+                        then
+                            case $x in 
+                                +([0-9])) input_record="$input_record:$x";
+                                           break
+                                           ;;
+                                     *) echo "please enter an integer!"
+                                        continue
+                                           ;; 
+                            esac
+                    fi
+        done
+            n=$n+1
+    done
+    
+echo $input_record
 sleep 3
-#echo ${datatypes_array[@]}
-#echo ${z[@]}
-#sleep 3
 calledFromMenu=0
 source ./connectDatabase.sh
-echo "testing push"
-
                         
 else
     read -p "Table doesn't exist , 
