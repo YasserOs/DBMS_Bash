@@ -1,22 +1,10 @@
 #!/bin/bash
 shopt -s extglob
 export LC_COLLATE=C 
-typeset -i i=2 ## i starts from 2nd line as th 1st contains number of columns
-typeset -i fn=1 ## field number
-typeset -i pk_found=0
-let columns_array[0]
-let datatypes_array[0]
-let pk_array[0]
-input_record=""
-read -p "Enter table name : " tbname
-if [ -f $dbPath/$DBdir/$tbname ]
-        then
-        typeset -i numFields=$(head -n 1 $dbPath/$DBdir/$tbname)
-        while test $i -le 3
+function initializeArrays () {
+    while test $i -le 3
         do
-            fn=1
-            ## we need to store the number of fields in the table file to loop over it 
-            ## so 4 here needs to be the number of fields in the table 
+            fn=1 
             while test $fn -le $numFields
             do 
                 ## i =2 means 2nd line , fill datatypes array
@@ -31,21 +19,21 @@ if [ -f $dbPath/$DBdir/$tbname ]
             done
             i=$i+1
         done
-        
-        rec_num=$(cat $dbPath/$DBdir/$tbname | wc -l)
+
+}
+
+function initializePK () {
+     rec_num=$(cat $dbPath/$DBdir/$tbname | wc -l)
         typeset -i r=4
         while test $r -le $rec_num
-            do
-                pk_array[$r]=$(cat $dbPath/$DBdir/$tbname | head -$r | tail -1 | cut -d: -f1) 
-                r=$r+1
-            done
+        do
+            pk_array[$r]=$(cat $dbPath/$DBdir/$tbname | head -$r | tail -1 | cut -d: -f1) 
+            r=$r+1
+        done
+}
 
-    ###end of data retrieval (pks , datatypes , columns)
-    echo ${columns_array[@]}
-    typeset -i n=0
-    while test $n -lt $numFields
-    do
-        while true 
+function validateInput () {
+    while true 
         do  
             read -p "enter data for ${columns_array[$n]} with type ${datatypes_array[$n]} : "  x
 
@@ -77,7 +65,7 @@ if [ -f $dbPath/$DBdir/$tbname ]
                             case $x in 
                                 +([a-zA-Z])) if [ $n -eq 0 ] 
                                              then 
-                                                input_record="$x"
+                                             input_record="$x"
                                              else 
                                              input_record="$input_record:$x"
                                              fi;
@@ -105,19 +93,17 @@ if [ -f $dbPath/$DBdir/$tbname ]
                             esac
                     fi
         done
-            n=$n+1
-    done
-    
-echo $input_record >> $dbPath/$DBdir/$tbname
-echo "=============================="
-echo "Record inserted successfully!"
-echo "=============================="
-sleep 1
-calledFromMenu=0
-source ./connectDatabase.sh
-       
-else
-    read -p "Table doesn't exist , 
+}
+
+function writeToFile () {
+    echo $input_record >> $dbPath/$DBdir/$tbname
+    echo "=============================="
+    echo "Record inserted successfully!"
+    echo "=============================="
+    sleep 1
+}
+function wrongAnswer () {
+      read -p "Table doesn't exist , 
     press 0 to go back to previous menu 
     or 1 to go to main menu 
     or 2 to retry :" x
@@ -130,5 +116,31 @@ else
             2) source ./insertRecord.sh
                 ;;
             esac
+}
+typeset -i i=2 ## i starts from 2nd line as th 1st contains number of columns
+typeset -i fn=1 ## field number
+typeset -i pk_found=0
+let columns_array[0]
+let datatypes_array[0]
+let pk_array[0]
+input_record=""
+read -p "Enter table name : " tbname
+if [ -f $dbPath/$DBdir/$tbname ]
+then
+    typeset -i numFields=$(head -n 1 $dbPath/$DBdir/$tbname)
+    initializeArrays
+    initializePK
+    typeset -i n=0
+    while test $n -lt $numFields
+    do
+        validateInput
+        n=$n+1
+    done
+    writeToFile
+    calledFromMenu=0
+    source ./connectDatabase.sh
+       
+else
+  wrongAnswer
 fi
     

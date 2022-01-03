@@ -1,4 +1,13 @@
 #!/bin/bash
+function wrongAnswer () {
+         read -p "Database doesn't exist press 1 to retry or 0 to go back to main menu :" x
+            case $x in
+            0) source ./Menu.sh
+                ;;
+            1) source ./connectDatabase.sh
+                ;;
+            esac
+}
 echo "++++++Connect to Database++++++"
 if [ $calledFromMenu -eq 1 ] 
 then
@@ -7,13 +16,7 @@ then
         then
             DBdir=$name
         else
-            read -p "Database doesn't exist press 1 to retry or 0 to go back to main menu :" x
-            case $x in
-            0) source ./Menu.sh
-                ;;
-            1) source ./connectDatabase.sh
-                ;;
-            esac
+            wrongAnswer
         fi
 fi
 echo "Connected to $DBdir successfully !"

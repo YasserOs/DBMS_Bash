@@ -1,15 +1,17 @@
 #!/bin/bash
-typeset -i n=0
-let columns[$n]
-let columnsString
-let dataTypes
-read -p "Enter table name :" tbname
-if [ -f $dbPath/$DBdir/$tbname ]
-then
-    echo "Table $tbname already exists !"
-    source ./createTable.sh
-else
-    ## takes primary key name and data type
+function createTable () {
+    touch $dbPath/$DBdir/$tbname
+    typeset -i numColumns=$numColumns+1
+    echo $numColumns >> $dbPath/$DBdir/$tbname
+    echo $dataTypes >> $dbPath/$DBdir/$tbname
+    echo $columnsString >> $dbPath/$DBdir/$tbname
+
+    echo "=============================="
+    echo "Table created successfully!"
+    echo "=============================="
+    sleep 1
+}
+function readPK () {
     read -p "Enter name of primary key :" pk
     columns[$n]="$pk"
     columnsString="$pk"
@@ -25,11 +27,8 @@ else
                 ;;
         esac
     done
-
-    ## increment n by 1 since primary key is already inserted
-    n=$n+1
-
-    ## takes the other columns
+}
+function readColumns () {
     read -p "Enter number of columns :" numColumns
     while test $n -le $numColumns
     do
@@ -73,15 +72,30 @@ else
         done
         n=$n+1
     done
+}
+typeset -i n=0
+let columns[$n]
+let columnsString
+let dataTypes
+read -p "Enter table name :" tbname
+if [[  $tbname != +([a-zA-Z]) ]] 
+then
+    echo "Table can't contain special characters"
+    source ./createTable.sh
+elif [ -f $dbPath/$DBdir/$tbname ] 
+then
+    echo "Table $tbname already exists !"
+    source ./createTable.sh
+else
+    ## takes primary key name and data type
+    readPK
+    ## increment n by 1 since primary key is already inserted
+    n=$n+1
+    ## takes the other columns
+    readColumns
 fi
 ## creating file for the table and redirecting echo to the file by >> to append a new line
+createTable
 
-touch $dbPath/$DBdir/$tbname
-typeset -i numColumns=$numColumns+1
-echo $numColumns >> $dbPath/$DBdir/$tbname
-echo $dataTypes >> $dbPath/$DBdir/$tbname
-echo $columnsString >> $dbPath/$DBdir/$tbname
-
-## resetting the flag to call the previous menu
 calledFromMenu=0
 source ./connectDatabase.sh

@@ -1,4 +1,20 @@
 #!/bin/bash
+function wrongAnswer () {
+
+    read -p "Table doesn't exist , 
+    press 0 to go back to previous menu 
+    or 1 to go to main menu 
+    or 2 to retry :" x
+            case $x in
+            0)  calledFromMenu=0;
+                source ./connectDatabase.sh
+                ;;
+            1) source ./Menu.sh
+                ;;
+            2) source ./selectFromTable.sh
+                ;;
+            esac
+}
 function selectfromfield ()
 {
    awk -F: '        BEGIN { 
@@ -51,19 +67,7 @@ if [ -f $dbPath/$DBdir/$tabname ]
             esac
         done
 else
-    read -p "Table doesn't exist , 
-    press 0 to go back to previous menu 
-    or 1 to go to main menu 
-    or 2 to retry :" x
-            case $x in
-            0)  calledFromMenu=0;
-                source ./connectDatabase.sh
-                ;;
-            1) source ./Menu.sh
-                ;;
-            2) source ./selectFromTable.sh
-                ;;
-            esac
+    wrongAnswer
 fi
     
 

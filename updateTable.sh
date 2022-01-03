@@ -1,13 +1,7 @@
 #!/bin/bash
-typeset -i fn=1
-typeset -i i=1
-typeset -i column_found=0
-typeset -i current_record=4
-newrecord=""
-read -p "Enter name of table : " tablename
-typeset -i fieldnum=$(head -n 1 $dbPath/$DBdir/$tablename)
-if [ -f $dbPath/$DBdir/$tablename ]
-    then
+function checkColumnExists () {
+
+
     while true
     do
         read -p "Enter name of column : " columnname
@@ -29,8 +23,9 @@ if [ -f $dbPath/$DBdir/$tablename ]
             echo "Column name does not exist!"
         fi
     done
-    read -p "Enter value to be updated : " oldvalue
-    read -p "Enter new value : " newvalue
+}
+
+function updateRecord () {
     lines=$(cat $dbPath/$DBdir/$tablename | wc -l)
     while test $current_record -le $lines
     do
@@ -60,10 +55,27 @@ if [ -f $dbPath/$DBdir/$tablename ]
                 fi
                 i=$i+1
             done
-            echo $newrecord
             sed -i 's/'"$match_record/$newrecord"'/g' $dbPath/$DBdir/$tablename
+            echo "Updated Old Record : $match_record to -> New Record : $newrecord "
             newrecord=""
         fi
         current_record=$current_record+1
     done
+
+}
+typeset -i fieldnum=0
+typeset -i fn=1
+typeset -i i=1
+typeset -i column_found=0
+typeset -i current_record=4
+newrecord=""
+read -p "Enter name of table : " tablename
+if [ -f $dbPath/$DBdir/$tablename ]
+    then
+    fieldnum=$(head -n 1 $dbPath/$DBdir/$tablename)
+    checkColumnExists
+    read -p "Enter value to be updated : " oldvalue
+    read -p "Enter new value : " newvalue
+    updateRecord
+    
 fi
