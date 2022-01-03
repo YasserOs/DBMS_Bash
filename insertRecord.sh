@@ -117,6 +117,7 @@ function wrongAnswer () {
                 ;;
             esac
 }
+echo " Changed insert "
 typeset -i i=2 ## i starts from 2nd line as th 1st contains number of columns
 typeset -i fn=1 ## field number
 typeset -i pk_found=0
