@@ -36,7 +36,7 @@ if [ -f $dbPath/$DBdir/$tbname ]
         typeset -i r=4
         while test $r -le $rec_num
             do
-                pk_array[$r]=$(cat cat $dbPath/$DBdir/$tbname | head -$r | tail -1 | cut -d: -f1) 
+                pk_array[$r]=$(cat $dbPath/$DBdir/$tbname | head -$r | tail -1 | cut -d: -f1) 
                 r=$r+1
             done
 

@@ -4,17 +4,11 @@ typeset -i column_found=0
 typeset -i currentrecord=4
 read -p "Enter table name : " tabname
 total=`cat $dbPath/$DBdir/$tabname | wc -l`
-typeset -i fieldnum=$(head -n 1 $dbPath/$DBdir/$tabname)
 recordss=$(( total - 3 ))
-if [ -f $dbPath/$DBdir/$tabname ]
-        then
-        select x in "Select all records " "Select a certain field"
-        do  
-            case $REPLY in
-            1) cat $dbPath/$DBdir/$tabname | tail -n $recordss;
-                break
-                ;;
-            2) while true
+typeset -i fieldnum=$(head -n 1 $dbPath/$DBdir/$tabname)
+function selectfromfield ()
+{
+    while true
                 do
                     read -p "Enter name of column : " cname
                     while test $fn -le $fieldnum
@@ -34,18 +28,28 @@ if [ -f $dbPath/$DBdir/$tabname ]
                     else
                         echo "Column name does not exist!"
                     fi
-                done;
+                done
                 while test $currentrecord -le $total
                 do
                 match_value=`cat $dbPath/$DBdir/$tabname | head -n $currentrecord | tail -n 1 | cut -d: -f$fn`
                 echo "$currentrecord : $match_value"
                 currentrecord=$currentrecord+1
-                done;
+                done
+}
+if [ -f $dbPath/$DBdir/$tabname ]
+        then
+        select x in "Select all records " "Select a certain field"
+        do  
+            case $REPLY in
+            1) cat $dbPath/$DBdir/$tabname | tail -n $recordss;
                 break
                 ;;
-                esac
-            done
-            fi
+            2) selectfromfield;
+               break
+               ;;
+               esac
+        done
+fi
 
 
 
