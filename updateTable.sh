@@ -38,31 +38,31 @@ if [ -f $dbPath/$DBdir/$tablename ]
         if [ "$match_column" == "$oldvalue" ]
         then
             match_record=`cat $dbPath/$DBdir/$tablename | head -n $current_record | tail -n 1`
-        while test $i -le $fieldnum  
-        do
-            field=`cat $dbPath/$DBdir/$tablename | head -n $current_record | tail -n 1 | cut -d: -f$i`
-            if [ $i -eq $fn ]
-            then
-                if [ $i -eq 1 ]
+            i=1
+            while test $i -le $fieldnum  
+            do
+                field=`cat $dbPath/$DBdir/$tablename | head -n $current_record | tail -n 1 | cut -d: -f$i`
+                if [ $i -eq $fn ]
                 then
-                    newrecord="$newvalue"
+                    if [ $i -eq 1 ]
+                    then
+                        newrecord="$newvalue"
+                    else
+                        newrecord="$newrecord:$newvalue"
+                    fi
                 else
-                    newrecord="$newrecord:$newvalue"
+                    if [ $i -eq 1 ]
+                    then
+                        newrecord="$field"
+                    else
+                        newrecord="$newrecord:$field"
+                    fi
                 fi
-            else
-                if [ $i -eq 1 ]
-                then
-                    newrecord="$field"
-                else
-                    newrecord="$newrecord:$field"
-                fi
-            fi
-            i=$i+1
-        done
-        echo $newrecord
-        newrecord=""
-           # sed -i '/'"$match_record"'/d' $dbPath/$DBdir/$tablename
-            #current_record=$current_record-1
+                i=$i+1
+            done
+            echo $newrecord
+            sed -i 's/'"$match_record/$newrecord"'/g' $dbPath/$DBdir/$tablename
+            newrecord=""
         fi
         current_record=$current_record+1
     done
