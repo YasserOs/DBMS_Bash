@@ -1,57 +1,71 @@
 #!/bin/bash
-typeset -i fn=1
-typeset -i column_found=0
-typeset -i currentrecord=4
-read -p "Enter table name : " tabname
-total=`cat $dbPath/$DBdir/$tabname | wc -l`
-recordss=$(( total - 3 ))
-typeset -i fieldnum=$(head -n 1 $dbPath/$DBdir/$tabname)
 function selectfromfield ()
 {
-    while true
-                do
-                    read -p "Enter name of column : " cname
-                    while test $fn -le $fieldnum
-                    do
-                        if [ "$cname" == "$(head -n 3 $dbPath/$DBdir/$tabname | tail -n 1 | cut -d: -f$fn)" ]
-                        then
-                        column_found=1
-                        break
-                        else
-                        column_found=0
-                        fi
-                        fn=$fn+1
-                    done
-                    if [ $column_found -eq 1 ]
-                    then
-                        break
-                    else
-                        echo "Column name does not exist!"
-                    fi
-                done
-                while test $currentrecord -le $total
-                do
-                match_value=`cat $dbPath/$DBdir/$tabname | head -n $currentrecord | tail -n 1 | cut -d: -f$fn`
-                echo "$currentrecord : $match_value"
-                currentrecord=$currentrecord+1
-                done
+   awk -F: '        BEGIN { 
+                        printf "Enter name of field :"
+                        getline field < "-"
+                        printf "Enter value :"
+                        getline value < "-" 
+                        fieldNum=0 
+                    }   
+
+                    {   if(NR==3){
+                            for(i=1;i<=NF;i++){
+                                if(field==$i)
+                                {
+                                    fieldNum=i
+                                    printf ("%s\n",$0)
+                                    break
+                                }
+                            }
+                        }
+                        if(fieldNum!=0){
+                            if(NR>3){
+                            if(value==$fieldNum){
+                                printf ("%s\n",$0)
+                            }
+                            }
+                        }
+                        
+                    }
+                    END { if(fieldNum==0){
+                                printf "Field not found !\n"
+                            }
+                    
+                    }' $dbPath/$DBdir/$tabname
+   
 }
+read -p "Enter table name : " tabname
 if [ -f $dbPath/$DBdir/$tabname ]
         then
-        select x in "Select all records " "Select a certain field"
+        select x in "Select all records " "Select a certain field" "Return to previous menu"
         do  
             case $REPLY in
-            1) cat $dbPath/$DBdir/$tabname | tail -n $recordss;
-                break
+            1) cat $dbPath/$DBdir/$tabname | awk '{if(NR>2) print $0}'
                 ;;
             2) selectfromfield;
-               break
                ;;
-               esac
+            3)  calledFromMenu=0;
+                source ./connectDatabase.sh
+                ;;
+            esac
         done
+else
+    read -p "Table doesn't exist , 
+    press 0 to go back to previous menu 
+    or 1 to go to main menu 
+    or 2 to retry :" x
+            case $x in
+            0)  calledFromMenu=0;
+                source ./connectDatabase.sh
+                ;;
+            1) source ./Menu.sh
+                ;;
+            2) source ./selectFromTable.sh
+                ;;
+            esac
 fi
-
-
+    
 
 
 

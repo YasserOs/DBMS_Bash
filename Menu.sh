@@ -1,5 +1,5 @@
 #!/bin/bash
-dbPath=$HOME/project/DBMS_Bash/dbs
+dbPath=$HOME/bashProject/dbs
 typeset -i calledFromMenu=1
 PS3="Enter choice > "
 select x in "Create Database" "List Databases" "Connect to Database" "Drop Database"

@@ -112,7 +112,7 @@ echo $input_record >> $dbPath/$DBdir/$tbname
 echo "=============================="
 echo "Record inserted successfully!"
 echo "=============================="
-sleep 3
+sleep 1
 calledFromMenu=0
 source ./connectDatabase.sh
        
