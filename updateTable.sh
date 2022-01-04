@@ -1,4 +1,14 @@
 #!/bin/bash
+function initializePK () {
+     rec_num=$(cat $dbPath/$DBdir/$tablename | wc -l)
+        typeset -i r=4
+        while test $r -le $rec_num
+        do
+            pkarray[$r]=$(cat $dbPath/$DBdir/$tablename | head -$r | tail -1 | cut -d: -f1)
+            r=$r+1
+        done
+}
+
 function checkColumnExists () {
 
 
@@ -18,6 +28,10 @@ function checkColumnExists () {
         done
         if [ $column_found -eq 1 ]
         then
+	    if [ $fn -eq 1 ]
+	    then
+		initializePK
+	    fi
             break
         else
             echo "Column name does not exist!"
@@ -26,6 +40,20 @@ function checkColumnExists () {
 }
 
 function updateRecord () {
+    read -p "Enter value to be updated : " oldvalue
+    read -p "Enter new value : " newvalue
+    if [ $fn -eq 1 ]
+    then
+	for i in "${pkarray[@]}"
+	do
+	  if [ $i = $newvalue ] 
+	  then
+	      echo " There is a primary key with the same value"
+	      sleep 1
+	      updateRecord
+	  fi
+	done
+    fi
     lines=$(cat $dbPath/$DBdir/$tablename | wc -l)
     while test $current_record -le $lines
     do
@@ -63,19 +91,19 @@ function updateRecord () {
     done
 
 }
+         
 typeset -i fieldnum=0
 typeset -i fn=1
 typeset -i i=1
 typeset -i column_found=0
 typeset -i current_record=4
+let pkarray[0]
 newrecord=""
 read -p "Enter name of table : " tablename
 if [ -f $dbPath/$DBdir/$tablename ]
     then
     fieldnum=$(head -n 1 $dbPath/$DBdir/$tablename)
     checkColumnExists
-    read -p "Enter value to be updated : " oldvalue
-    read -p "Enter new value : " newvalue
     updateRecord
     
 fi
