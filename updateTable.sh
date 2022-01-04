@@ -16,8 +16,8 @@ function checkColumnExists () {
     do
         read -p "Enter name of column : " columnname
         fn=1
-	 while test $fn -le $fieldnum
-         do
+	    while test $fn -le $fieldnum
+        do
             if [ "$columnname" == "$(head -n 3 $dbPath/$DBdir/$tablename | tail -n 1 | cut -d: -f$fn)" ]
             then
             column_found=1
@@ -29,18 +29,20 @@ function checkColumnExists () {
         done
         if [ $column_found -eq 1 ]
         then
-	    if [ $fn -eq 1 ]
-	    then
-		initializePK
-	    fi
+            if [ $fn -eq 1 ]
+            then
+                initializePK
+            fi
             break
         else
             echo "Column name does not exist!"
+            checkColumnExists
         fi
     done
 }
 
 function updateRecord () {
+    value_found=0
     read -p "Enter value to be updated : " oldvalue
     read -p "Enter new value : " newvalue
     # validate if the the column to be updated is 1 i.e primary key && if the newvlaue already exists
@@ -50,7 +52,7 @@ function updateRecord () {
 	do
 	  if [ $i = $newvalue ] 
 	  then
-	      echo " There is a primary key with the same value"
+	      echo "There is a primary key with the same value"
 	      sleep 1
 	      updateRecord
 	  fi
@@ -65,6 +67,8 @@ function updateRecord () {
         # checks if the value entered by user exists or not 
         if [ "$match_column" == "$oldvalue" ]
         then
+            value_found=1
+            echo "Etnered if"
             match_record=`cat $dbPath/$DBdir/$tablename | head -n $current_record | tail -n 1`
             i=1
             #process field by field on each line 
@@ -96,12 +100,14 @@ function updateRecord () {
             sed -i 's/'"$match_record/$newrecord"'/g' $dbPath/$DBdir/$tablename
             echo "Updated Old Record : $match_record to -> New Record : $newrecord "
             newrecord=""
-	    else
-		echo "The value you entered does not exist"
-		updateRecord
         fi
         current_record=$current_record+1
     done
+    if [ $value_found -eq 0 ]
+    then
+        echo "Value doesn't exist"
+        updateRecord
+    fi
 
 }
          
@@ -114,9 +120,14 @@ let pkarray[0]
 newrecord=""
 read -p "Enter name of table : " tablename
 if [ -f $dbPath/$DBdir/$tablename ]
-    then
+then
     fieldnum=$(head -n 1 $dbPath/$DBdir/$tablename)
     checkColumnExists
     updateRecord
+else
+    echo "Table doesn't exist !"
+    sleep 1
+    source ./updateTable.sh
+
     
 fi
