@@ -68,7 +68,6 @@ function updateRecord () {
         if [ "$match_column" == "$oldvalue" ]
         then
             value_found=1
-            echo "Etnered if"
             match_record=`cat $dbPath/$DBdir/$tablename | head -n $current_record | tail -n 1`
             i=1
             #process field by field on each line 
