@@ -42,6 +42,7 @@ function checkColumnExists () {
 function updateRecord () {
     read -p "Enter value to be updated : " oldvalue
     read -p "Enter new value : " newvalue
+    # validate if the the column to be updated is 1 i.e primary key && if the newvlaue already exists
     if [ $fn -eq 1 ]
     then
 	for i in "${pkarray[@]}"
@@ -55,16 +56,23 @@ function updateRecord () {
 	done
     fi
     lines=$(cat $dbPath/$DBdir/$tablename | wc -l)
+    # process record line by line , current_record starts from 4 i.e first record
     while test $current_record -le $lines
     do
+        # $fn is the field number that got matched , match column is the value in the field
         match_column=`cat $dbPath/$DBdir/$tablename | head -n $current_record | tail -n 1 | cut -d: -f$fn`
+        # checks if the value entered by user exists or not 
         if [ "$match_column" == "$oldvalue" ]
         then
             match_record=`cat $dbPath/$DBdir/$tablename | head -n $current_record | tail -n 1`
             i=1
+            #process field by field on each line 
             while test $i -le $fieldnum  
             do
+                #field is the value of the field
                 field=`cat $dbPath/$DBdir/$tablename | head -n $current_record | tail -n 1 | cut -d: -f$i`
+                
+                #check if $fn (the field number that needs to be updated == the current field number ) then concatenate the new value
                 if [ $i -eq $fn ]
                 then
                     if [ $i -eq 1 ]
@@ -73,6 +81,7 @@ function updateRecord () {
                     else
                         newrecord="$newrecord:$newvalue"
                     fi
+                # else enter the same old valued i.e field
                 else
                     if [ $i -eq 1 ]
                     then
