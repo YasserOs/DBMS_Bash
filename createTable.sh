@@ -1,4 +1,5 @@
 #!/bin/bash
+#create table
 function createTable () {
     touch $dbPath/$DBdir/$tbname
     typeset -i numColumns=$numColumns+1
