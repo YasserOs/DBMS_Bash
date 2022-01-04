@@ -15,8 +15,9 @@ function checkColumnExists () {
     while true
     do
         read -p "Enter name of column : " columnname
-        while test $fn -le $fieldnum
-        do
+        fn=1
+	 while test $fn -le $fieldnum
+         do
             if [ "$columnname" == "$(head -n 3 $dbPath/$DBdir/$tablename | tail -n 1 | cut -d: -f$fn)" ]
             then
             column_found=1
@@ -95,6 +96,9 @@ function updateRecord () {
             sed -i 's/'"$match_record/$newrecord"'/g' $dbPath/$DBdir/$tablename
             echo "Updated Old Record : $match_record to -> New Record : $newrecord "
             newrecord=""
+	    else
+		echo "The value you entered does not exist"
+		updateRecord
         fi
         current_record=$current_record+1
     done
