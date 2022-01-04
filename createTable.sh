@@ -34,7 +34,7 @@ function readPK () {
             esac
         done
 }
-function readColumns () {
+function readColumns () 
     read -p "Enter number of columns :" numColumns
     if [[ $numColumns == 0 || $numColumns != +([0-9]) || $numColumns == *" "* ]]
     then
