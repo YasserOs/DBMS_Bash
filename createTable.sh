@@ -49,7 +49,7 @@ function readPK () {
             while true
             do
                 read -p "Enter name of column $n :" name
-                if [[ $name != +([a-zA-Z1-9]*[a-zA-Z0-9]) || $name == *" "* ]]
+                if [[ $name != +([a-zA-Z_]*[a-zA-Z0-9_]) || $name == *" "* ]]
                     then
                         echo "Invalid column name"
                         continue 
