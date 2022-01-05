@@ -27,7 +27,9 @@ function checkColumnExists () {
 }
 
 function deleteRecord () {
-
+    value_found=0
+    typeset -i current_record=4
+    read -p "Enter value : " x
     lines=$(cat $dbPath/$DBdir/$tablename | wc -l)
     while test $current_record -le $lines
     do
@@ -38,18 +40,23 @@ function deleteRecord () {
             sed -i '/'"$match_record"'/d' $dbPath/$DBdir/$tablename
             echo "Deleted $match_record Successfully !"
             current_record=$current_record-1
+            value_found=1
         fi
         current_record=$current_record+1
     done
+    if [ $value_found -eq 0 ]
+    then
+        echo "The value you entered does not exist!"
+        deleteRecord
+    fi
 }
 typeset -i fn=1
 typeset -i column_found=0
-typeset -i current_record=4
+
 read -p "Enter name of table : " tablename
 if [ -f $dbPath/$DBdir/$tablename ]
     then
     checkColumnExists
-    read -p "Enter value : " x
     deleteRecord
 
 fi

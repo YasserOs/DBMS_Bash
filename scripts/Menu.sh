@@ -1,5 +1,5 @@
 #!/bin/bash
-dbPath=$HOME/bashProject/dbs
+dbPath=$HOME/DBMS_Bash/dbs
 typeset -i calledFromMenu=1
 
 PS3="Enter choice > "

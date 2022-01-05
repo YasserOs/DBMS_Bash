@@ -43,6 +43,7 @@ function checkColumnExists () {
 
 function updateRecord () {
     value_found=0
+    typeset -i current_record=4
     read -p "Enter value to be updated : " oldvalue
     read -p "Enter new value : " newvalue
     # validate if the the column to be updated is 1 i.e primary key && if the newvlaue already exists
@@ -114,7 +115,7 @@ typeset -i fieldnum=0
 typeset -i fn=1
 typeset -i i=1
 typeset -i column_found=0
-typeset -i current_record=4
+
 let pkarray[0]
 newrecord=""
 read -p "Enter name of table : " tablename
